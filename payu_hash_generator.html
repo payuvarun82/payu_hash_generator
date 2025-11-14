@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayU Hash Key Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 2px solid #dee2e6;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .result-container {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .result-container.show {
+            display: block;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-value {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            color: #212529;
+        }
+        
+        .error-container {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #721c24;
+            display: none;
+        }
+        
+        .error-container.show {
+            display: block;
+        }
+        
+        .info-section {
+            background: #d1ecf1;
+            border: 2px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 2rem;
+            color: #0c5460;
+        }
+        
+        .info-section h3 {
+            margin-bottom: 0.5rem;
+            color: #0a4e5c;
+        }
+        
+        .copy-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 0.5rem;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+        }
+        
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PayU Hash Key Generator</h1>
+        
+        <form id="hashForm">
+            <div class="form-group">
+                <label for="hashname">Hash Name:</label>
+                <input type="text" id="hashname" name="hashname" 
+                       placeholder="e.g., RqhS3D|validateVPA|7879357664@ybl|" 
+                       value="RqhS3D|validateVPA|7879357664@ybl|">
+            </div>
+            
+            <div class="form-group">
+                <label for="salt">SALT Key:</label>
+                <input type="text" id="salt" name="salt" 
+                       placeholder="Enter your PayU SALT key" 
+                       value="izF09TlpX4ZOwmf9MvXijwYsBPUmxYHD">
+            </div>
+            
+            <div class="form-group">
+                <label for="graphqlQuery">GraphQL Query (Optional):</label>
+                <textarea id="graphqlQuery" name="graphqlQuery" 
+                          placeholder='mutation { createPayuHashKey ( hashname: "RqhS3D|validateVPA|7879357664@ybl|") { get_payment_hash }}'>mutation { createPayuHashKey ( hashname: "RqhS3D|validateVPA|7879357664@ybl|") { get_payment_hash }}</textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn-primary" onclick="generateHash()">Generate Hash</button>
+                <button type="button" class="btn-secondary" onclick="clearForm()">Clear Form</button>
+            </div>
+        </form>
+        
+        <div id="resultContainer" class="result-container">
+            <div class="result-label">Generated Hash (SHA-512):</div>
+            <div class="result-value" id="hashResult">
+                <span id="hashValue"></span>
+                <button class="copy-btn" onclick="copyToClipboard('hashValue')">Copy</button>
+            </div>
+            
+            <div class="result-label" style="margin-top: 1rem;">GraphQL Response:</div>
+            <div class="result-value" id="graphqlResponse">
+                <span id="responseValue"></span>
+                <button class="copy-btn" onclick="copyToClipboard('responseValue')">Copy</button>
+            </div>
+        </div>
+        
+        <div id="errorContainer" class="error-container">
+            <strong>Error:</strong> <span id="errorMessage"></span>
+        </div>
+        
+        <div class="info-section">
+            <h3>How to Use:</h3>
+            <ol>
+                <li>Enter the <strong>Hash Name</strong> (the string you want to hash)</li>
+                <li>Enter your PayU <strong>SALT key</strong> (keep this secret)</li>
+                <li>Optionally, modify the GraphQL query</li>
+                <li>Click <strong>Generate Hash</strong> to create the SHA-512 hash</li>
+            </ol>
+            
+            <h3 style="margin-top: 1rem;">Security Note:</h3>
+            <p>The SALT key is sensitive information. In production, this should be stored securely on the server side and never exposed to the client.</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate SHA-512 hash
+        async function sha512(text) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-512', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        
+        // Function to extract hashname from GraphQL query
+        function extractHashnameFromQuery(query) {
+            const regex = /hashname:\s*\"([^"]+)\"/;
+            const match = query.match(regex);
+            return match ? match[1] : null;
+        }
+        
+        // Function to generate hash
+        async function generateHash() {
+            try {
+                hideError();
+                hideResult();
+                
+                let hashname = document.getElementById('hashname').value.trim();
+                const salt = document.getElementById('salt').value.trim();
+                const graphqlQuery = document.getElementById('graphqlQuery').value.trim();
+                
+                // Validate inputs
+                if (!hashname && !graphqlQuery) {
+                    showError('Please provide either a hash name or a GraphQL query');
+                    return;
+                }
+                
+                if (!salt) {
+                    showError('SALT key is required');
+                    return;
+                }
+                
+                // If hashname is empty, try to extract from GraphQL query
+                if (!hashname && graphqlQuery) {
+                    hashname = extractHashnameFromQuery(graphqlQuery);
+                    if (!hashname) {
+                        showError('Could not extract hashname from GraphQL query');
+                        return;
+                    }
+                    // Update the hashname field with extracted value
+                    document.getElementById('hashname').value = hashname;
+                }
+                
+                // Generate hash
+                const combinedString = hashname + salt;
+                const hash = await sha512(combinedString);
+                
+                // Create GraphQL response
+                const graphqlResponse = {
+                    "data": {
+                        "createPayuHashKey": {
+                            "get_payment_hash": hash
+                        }
+                    }
+                };
+                
+                // Display results
+                document.getElementById('hashValue').textContent = hash;
+                document.getElementById('responseValue').textContent = JSON.stringify(graphqlResponse, null, 2);
+                showResult();
+                
+            } catch (error) {
+                showError('Error generating hash: ' + error.message);
+            }
+        }
+        
+        // Function to clear the form
+        function clearForm() {
+            document.getElementById('hashForm').reset();
+            hideResult();
+            hideError();
+        }
+        
+        // Function to copy text to clipboard
+        async function copyToClipboard(elementId) {
+            try {
+                const text = document.getElementById(elementId).textContent;
+                await navigator.clipboard.writeText(text);
+                
+                // Visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        }
+        
+        // Utility functions
+        function showResult() {
+            document.getElementById('resultContainer').classList.add('show');
+        }
+        
+        function hideResult() {
+            document.getElementById('resultContainer').classList.remove('show');
+        }
+        
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorContainer').classList.add('show');
+        }
+        
+        function hideError() {
+            document.getElementById('errorContainer').classList.remove('show');
+        }
+        
+        // Auto-extract hashname when GraphQL query changes
+        document.getElementById('graphqlQuery').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query) {
+                const extractedHashname = extractHashnameFromQuery(query);
+                if (extractedHashname) {
+                    document.getElementById('hashname').value = extractedHashname;
+                }
+            }
+        });
+        
+        // Handle Enter key in form fields
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                generateHash();
+            }
+        });
+    </script>
+</body>
+</html>
